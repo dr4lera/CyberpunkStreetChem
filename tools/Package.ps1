@@ -1,9 +1,8 @@
-param()
+param([switch]$SplitOnly)
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $version=(Get-Content -LiteralPath (Join-Path $root 'VERSION') -Raw).Trim()
 $stage=Join-Path $root ('dist\StreetChem-Solo-v'+$version)
-if(Test-Path -LiteralPath $stage){throw "Package stage already exists: $stage. Use a fresh version or move it aside."}
 $payload=@(
  @{source='native\build\StreetChemHost.dll';dest='payload/cyberpunk/red4ext/plugins/StreetChem/StreetChemHost.dll'},
  @{source='native\build\StreetChemRender.addon64';dest='payload/cyberpunk/bin/x64/StreetChemRender.addon64'},
@@ -14,6 +13,8 @@ $payload=@(
  @{source='guest\bin\Release\net6.0\StreetChem.Guest.dll';dest='payload/schedule-i/Mods/StreetChem.Guest.dll'}
 )
 foreach($row in $payload){if(!(Test-Path -LiteralPath (Join-Path $root $row.source))){throw "Build first. Missing: $($row.source)"}}
+if(!$SplitOnly){
+if(Test-Path -LiteralPath $stage){throw "Package stage already exists: $stage. Use a fresh version or move it aside."}
 New-Item -ItemType Directory -Path $stage -Force | Out-Null
 foreach($name in @('README.md','CHANGELOG.md','CREDITS.md','LICENSE','THIRD_PARTY_NOTICES.md','VERSION')){Copy-Item -LiteralPath (Join-Path $root $name) -Destination (Join-Path $stage $name)}
 Copy-Item -LiteralPath (Join-Path $root 'docs') -Destination (Join-Path $stage 'docs') -Recurse
@@ -26,3 +27,22 @@ Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zip
 $hash=(Get-FileHash -LiteralPath $zip).Hash
 ($hash+'  '+[IO.Path]::GetFileName($zip)) | Set-Content -LiteralPath ($zip+'.sha256')
 Write-Output "$zip ($hash)"
+}
+# Game-root archives for mod managers that assign one archive to one game.
+foreach($game in @(@{name='Cyberpunk2077';prefix='payload/cyberpunk/';count=6},@{name='ScheduleI';prefix='payload/schedule-i/';count=1})){
+ $name='StreetChem-'+$game.name+'-v'+$version
+ $gameStage=Join-Path $root ('dist\'+$name)
+ $gameZip=$gameStage+'.zip'
+ if((Test-Path -LiteralPath $gameStage) -or (Test-Path -LiteralPath $gameZip)){throw "Split package already exists: $name. Move it aside before repackaging."}
+ $selected=@($payload | Where-Object {$_.dest.StartsWith($game.prefix)})
+ if($selected.Count -ne $game.count){throw "Unexpected $($game.name) payload count"}
+ foreach($row in $selected){
+  $target=Join-Path $gameStage $row.dest.Substring($game.prefix.Length)
+  New-Item -ItemType Directory -Path (Split-Path -Parent $target) -Force | Out-Null
+  Copy-Item -LiteralPath (Join-Path $root $row.source) -Destination $target
+ }
+ Compress-Archive -Path (Join-Path $gameStage '*') -DestinationPath $gameZip
+ $hash=(Get-FileHash -LiteralPath $gameZip).Hash
+ ($hash+'  '+[IO.Path]::GetFileName($gameZip)) | Set-Content -LiteralPath ($gameZip+'.sha256')
+ Write-Output "$gameZip ($hash)"
+}

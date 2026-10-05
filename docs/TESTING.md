@@ -19,6 +19,7 @@ The release source removes personal test grants/compensation and multiplayer pro
 - Installer `-WhatIf` made no changes; existing ReShade settings and techniques survived installation.
 - Backup restoration recovered original files and removed added payloads.
 - A deliberately corrupted release payload was rejected before installation.
+- Both game-specific ZIPs contain exactly their expected game-root paths (six Cyberpunk files, one Schedule I file), with bytes identical to the original released payload. Their publication lint has no failures; the missing-README warning is intentional because these archives contain only installable mod files and documentation is provided in the repository/combined download.
 - Publication lint checked the source and package for secrets, decompiler fingerprints, personal paths and copied retail files.
 
 The sanitized release build has not received a separate full gameplay session; the gameplay observations above came from development on this same setup.

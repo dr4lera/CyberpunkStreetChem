@@ -15,7 +15,28 @@ Install these separately from their official projects:
 
 Street Chem does not bundle or replace those runtimes. A normal ReShade build without full add-on support will not load the image transport. Follow MelonLoader's runtime requirements if it asks for .NET. Do not mix Mono/beta-game assemblies with this IL2CPP build.
 
-## Install the download
+## Separate game ZIPs (mod managers or manual installation)
+
+Both halves are required. These ZIPs start directly at each game's installation root; they have no `payload/` wrapper, dependency binaries or installer scripts.
+
+| Release asset | Assign to / extract into | Contents |
+|---|---|---|
+| **StreetChem-Cyberpunk2077-v0.1.0.zip** | Cyberpunk 2077 root (contains `bin`, `r6`, `red4ext`) | Six host files under `bin/x64`, `r6/scripts/StreetChem`, `red4ext/plugins/StreetChem` |
+| **StreetChem-ScheduleI-v0.1.0.zip** | Schedule I root (contains `Schedule I.exe`) | `Mods/StreetChem.Guest.dll` |
+
+For an upload/import form that asks which game each ZIP belongs to, assign the Cyberpunk ZIP to Cyberpunk and the Schedule I ZIP to Schedule I. Checksums are verification text, not installable mods. The combined Solo ZIP is the alternative automatic installer, not a third required mod.
+
+Install the dependencies above first, close both games, and back up any existing StreetChem files before replacing them. Extract each archive into its matching game root, or have your mod manager install it there.
+
+**Cyberpunk ReShade setup is still required when using the split ZIPs:**
+
+1. Copy `ReShade.fxh` from your own official Standard effects installation into `bin/x64/streetchem/shaders/` beside `StreetChemLab.fx`.
+2. In Cyberpunk's ReShade overlay (**Home**), add `.\streetchem\shaders` to the effect search paths alongside your existing paths, then reload effects.
+3. Enable **StreetChemLab** in your selected preset. Keep other desired effects enabled. Full add-on support is required for `StreetChemRender.addon64`.
+
+The split archives do not edit ReShade settings or create the automatic installer's backup journal. To uninstall these halves, close both games and remove the seven StreetChem payload files listed below, then disable StreetChemLab/remove its added shader search path. Restore any previous mod files from your own backup. Retain game saves and `%LOCALAPPDATA%\StreetChem`.
+
+## Combined download with automatic installer
 
 1. Download the **StreetChem-Solo-v0.1.0.zip** release asset and extract it to a normal folder. GitHub's automatic source-code ZIP does not contain playable binaries.
 2. Close both games. The installer refuses to stop games or write while the selected copies are running.

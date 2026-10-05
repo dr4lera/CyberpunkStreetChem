@@ -6,7 +6,7 @@ Grow and sell Schedule I products in Cyberpunk's Night City. Both games run on y
 
 ## Start here
 
-1. Download `StreetChem-Solo-v0.1.0.zip` from [Releases](https://github.com/dr4lera/CyberpunkStreetChem/releases/latest), rather than GitHub's source-code ZIP.
+1. Download from [Releases](https://github.com/dr4lera/CyberpunkStreetChem/releases/latest), rather than GitHub's source-code ZIP. Mod managers can use the separate **StreetChem-Cyberpunk2077-v0.1.0.zip** and **StreetChem-ScheduleI-v0.1.0.zip** archives. The original **StreetChem-Solo-v0.1.0.zip** remains available with the automatic installer for both games.
 2. Install the required loaders and follow [installation](docs/INSTALL.md).
 3. Load your paired saves in both games, then play Cyberpunk. Schedule I must be loaded and unpaused.
 4. Aim at a flat floor: **Ctrl+B** buys a grow tent for 1200 eddies. Aim at its pot: **Ctrl+E** plants, waters or harvests according to its state. Harvest bags automatically.

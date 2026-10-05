@@ -16,4 +16,6 @@ pwsh -NoProfile -File .\tools\Package.ps1
 
 `JsonIncludeDir` must contain `json.hpp`; ReShadeSDKDir must contain `reshade.hpp`. RED4ext.SDK's vendor dependencies must be present. The generated constants are committed so Python is not required to build. Binaries, dependency folders and package output are ignored by Git. Release packaging uses an explicit payload list and excludes prototype multiplayer, saves, credentials and retail content.
 
+Packaging creates the combined installer ZIP plus separate Cyberpunk and Schedule I ZIPs rooted at their respective game directories. `tools/Package.ps1 -SplitOnly` creates just the two game archives when the combined package already exists. Existing output stages must be moved aside before repackaging.
+
 Run source validation with `tools/Validate.ps1`; perform actual in-game checks before publishing a new supported version. A successful compile is not proof of gameplay behavior.
