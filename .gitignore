@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+native/build/
+dist/
+.deps/
+*.user
+*.log
+.env*

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <AssemblyName>StreetChem.Guest</AssemblyName><Version>0.1.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony"><HintPath>$(MelonLoaderDir)/net6/0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="MelonLoader"><HintPath>$(MelonLoaderDir)/net6/MelonLoader.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="$(ScheduleIPath)/MelonLoader/Il2CppAssemblies/*.dll"><Private>false</Private></Reference>
+    <Reference Include="Il2CppInterop.Runtime"><HintPath>$(MelonLoaderDir)/net6/Il2CppInterop.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Compile Include="../generated/BridgeConfig.cs" Link="BridgeConfig.cs"/>
+    <Compile Include="../generated/InputConfig.cs" Link="InputConfig.cs"/>
+  </ItemGroup>
+  <Target Name="ValidateGameReferences" BeforeTargets="ResolveReferences">
+    <Error Condition="!Exists('$(ScheduleIPath)/MelonLoader/Il2CppAssemblies/Assembly-CSharp.dll')" Text="Set ScheduleIPath to your Schedule I installation after running MelonLoader once."/>
+    <Error Condition="!Exists('$(MelonLoaderDir)/net6/MelonLoader.dll')" Text="Set MelonLoaderDir to the installed MelonLoader directory."/>
+  </Target>
+</Project>
