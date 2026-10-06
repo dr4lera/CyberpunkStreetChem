@@ -1,0 +1,9 @@
+<!-- SPDX-License-Identifier: GPL-3.0-only -->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><OutputType>Exe</OutputType><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup>
+    <Reference Include="WolvenKit.RED4"><HintPath>$(WolvenKitDir)/WolvenKit.RED4.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="WolvenKit.Core"><HintPath>$(WolvenKitDir)/WolvenKit.Core.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="WolvenKit.Common"><HintPath>$(WolvenKitDir)/WolvenKit.Common.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

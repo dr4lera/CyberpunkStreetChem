@@ -10,6 +10,8 @@ $payload=@(
  @{source='host\StreetChemCity.reds';dest='payload/cyberpunk/r6/scripts/StreetChem/StreetChemCity.reds'},
  @{source='host\StreetChemVisual.reds';dest='payload/cyberpunk/r6/scripts/StreetChem/StreetChemVisual.reds'},
  @{source='host\StreetChemRunners.reds';dest='payload/cyberpunk/r6/scripts/StreetChem/StreetChemRunners.reds'},
+ @{source='host\StreetChemConsumables.reds';dest='payload/cyberpunk/r6/scripts/StreetChem/StreetChemConsumables.reds'},
+ @{source='host\StreetChemDealer.reds';dest='payload/cyberpunk/r6/scripts/StreetChem/StreetChemDealer.reds'},
  @{source='guest\bin\Release\net6.0\StreetChem.Guest.dll';dest='payload/schedule-i/Mods/StreetChem.Guest.dll'}
 )
 foreach($row in $payload){if(!(Test-Path -LiteralPath (Join-Path $root $row.source))){throw "Build first. Missing: $($row.source)"}}
@@ -19,6 +21,14 @@ New-Item -ItemType Directory -Path $stage -Force | Out-Null
 foreach($name in @('README.md','CHANGELOG.md','CREDITS.md','LICENSE','THIRD_PARTY_NOTICES.md','VERSION')){Copy-Item -LiteralPath (Join-Path $root $name) -Destination (Join-Path $stage $name)}
 Copy-Item -LiteralPath (Join-Path $root 'docs') -Destination (Join-Path $stage 'docs') -Recurse
 foreach($name in @('Install.ps1','Restore.ps1')){Copy-Item -LiteralPath (Join-Path $root ('installer\'+$name)) -Destination (Join-Path $stage $name)}
+New-Item -ItemType Directory -Path (Join-Path $stage 'tools\IconCooker') -Force|Out-Null
+Copy-Item -LiteralPath (Join-Path $root 'tools\BuildLocalIcons.ps1') -Destination (Join-Path $stage 'tools\BuildLocalIcons.ps1')
+foreach($name in @('IconCooker.dll','IconCooker.deps.json','IconCooker.runtimeconfig.json')){
+ $converter=Join-Path $root ('tools\IconCooker\bin\Release\net10.0\'+$name)
+ if(!(Test-Path -LiteralPath $converter)){throw 'Build the IconCooker with WolvenKitDir before packaging.'}
+ Copy-Item -LiteralPath $converter -Destination (Join-Path $stage ('tools\IconCooker\'+$name))
+}
+foreach($name in @('Program.cs','IconCooker.csproj','LICENSE')){Copy-Item -LiteralPath (Join-Path $root ('tools\IconCooker\'+$name)) -Destination (Join-Path $stage ('tools\IconCooker\'+$name))}
 foreach($row in $payload){$dest=Join-Path $stage $row.dest;New-Item -ItemType Directory -Path (Split-Path -Parent $dest) -Force | Out-Null;Copy-Item -LiteralPath (Join-Path $root $row.source) -Destination $dest}
 $rows=Get-ChildItem -LiteralPath $stage -File -Recurse | ForEach-Object {@{path=[IO.Path]::GetRelativePath($stage,$_.FullName).Replace('\','/');sha256=(Get-FileHash -LiteralPath $_.FullName).Hash}}
 $rows | Sort-Object path | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $stage 'FILES.json')
@@ -29,7 +39,7 @@ $hash=(Get-FileHash -LiteralPath $zip).Hash
 Write-Output "$zip ($hash)"
 }
 # Game-root archives for mod managers that assign one archive to one game.
-foreach($game in @(@{name='Cyberpunk2077';prefix='payload/cyberpunk/';count=6},@{name='ScheduleI';prefix='payload/schedule-i/';count=1})){
+foreach($game in @(@{name='Cyberpunk2077';prefix='payload/cyberpunk/';count=8},@{name='ScheduleI';prefix='payload/schedule-i/';count=1})){
  $name='StreetChem-'+$game.name+'-v'+$version
  $gameStage=Join-Path $root ('dist\'+$name)
  $gameZip=$gameStage+'.zip'

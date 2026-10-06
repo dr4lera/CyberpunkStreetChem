@@ -10,6 +10,7 @@
 #include <atomic>
 #include <deque>
 #include <array>
+#include <map>
 #include <unordered_map>
 #include <chrono>
 #include <string>
@@ -24,6 +25,24 @@ std::deque<Json> outgoing;
 Json snapshot=Json::object(), receipt=Json::object();
 std::unordered_map<std::string,Json> replies;
 uint64_t lastSuccess=0;
+std::map<std::string,Json> doseCatalog;
+HANDLE drugMapping=nullptr;
+uint8_t* drugView=nullptr;
+std::filesystem::path CatalogPath(){wchar_t local[32768]{};GetEnvironmentVariableW(L"LOCALAPPDATA",local,32768);return std::filesystem::path(local)/L"StreetChem"/L"consumables"/L"catalog.json";}
+void LoadCatalog(){try{std::ifstream file(CatalogPath());if(file){Json data;file>>data;for(auto& [key,row]:data.items())doseCatalog[key]=row;}}catch(...){} }
+void RememberProducts(const Json& data){
+    bool changed=false;
+    for(const auto& collection:{"items","shop"})if(data.contains(collection))for(const auto& item:data[collection]){
+        if(!item.value("product",false)||!item.contains("key")||!item["key"].is_string())continue;
+        const auto key=item["key"].get<std::string>();if(key.size()!=24)continue;
+        Json row=item;row.erase("slot");row.erase("quantity");row.erase("price");
+        if(std::string(collection)=="items" && item.value("quantity",0)>0)row["sellPrice"]=static_cast<int>(item.value("price",0.0)/item.value("quantity",1)*10.0);
+        else if(doseCatalog.contains(key) && doseCatalog[key].contains("sellPrice"))row["sellPrice"]=doseCatalog[key]["sellPrice"];
+        else row["sellPrice"]=static_cast<int>(item.value("price",0.0)/1.25);
+        if(!doseCatalog.contains(key)||doseCatalog[key]!=row){doseCatalog[key]=row;changed=true;}
+    }
+    if(changed)try{const auto path=CatalogPath();std::filesystem::create_directories(path.parent_path());auto tmp=path;tmp+=L".tmp";{std::ofstream file(tmp);file<<Json(doseCatalog).dump(2);}MoveFileExW(tmp.c_str(),path.c_str(),MOVEFILE_REPLACE_EXISTING);}catch(...){}
+}
 std::array<std::atomic_bool,256> pressed{};
 std::array<bool,256> previous{};
 std::array<std::atomic_int,256> modifiers{};
@@ -69,7 +88,7 @@ void Run() {
                 if(!response.value("ok",false))response["status"]="error";
                 if(request.contains("id"))response["id"]=request["id"];
                 std::lock_guard lock(guard);lastSuccess=now;
-                if(request["op"]=="observe")snapshot=std::move(response);
+                if(request["op"]=="observe"){RememberProducts(response);snapshot=std::move(response);}
                 else {receipt=response;if(request.contains("id")){if(replies.size()>512)replies.erase(replies.begin());replies[request["id"].get<std::string>()]=std::move(response);}}
             }catch(const std::exception& e){
                 if(request.contains("id")){std::lock_guard lock(guard);receipt={{"ok",false},{"status","uncertain"},{"id",request["id"]},{"error",e.what()}};replies[request["id"].get<std::string>()]=receipt;}
@@ -92,6 +111,25 @@ Json Product(int index){
 }
 Json Runner(int index){if(index<0 || !snapshot.contains("runners") || index>=static_cast<int>(snapshot["runners"].size()))return Json::object();return snapshot["runners"][index];}
 using Context=RED4ext::IScriptable;using Frame=RED4ext::CStackFrame;
+Json Dose(int index){if(index<0||index>=static_cast<int>(doseCatalog.size()))return Json::object();auto it=doseCatalog.begin();std::advance(it,index);return it->second;}
+void Clock(Context*,Frame* f,float* out,int64_t){f->code++;static const auto start=GetTickCount64();if(out)*out=static_cast<float>(GetTickCount64()-start)/1000.f;}
+void ShopCount(Context*,Frame* f,int32_t* out,int64_t){f->code++;std::lock_guard lock(guard);if(out)*out=snapshot.contains("shop")?static_cast<int32_t>(snapshot["shop"].size()):0;}
+void ShopValue(Context*,Frame* f,RED4ext::CString* out,int64_t){int32_t index=0;RED4ext::CString field;RED4ext::GetParameter(f,&index);RED4ext::GetParameter(f,&field);f->code++;std::lock_guard lock(guard);std::string value;
+    if(snapshot.contains("shop") && index>=0 && index<static_cast<int32_t>(snapshot["shop"].size())){const auto& row=snapshot["shop"][index];if(row.contains(field.c_str())){auto item=row[field.c_str()];value=item.is_string()?item.get<std::string>():item.dump();}}if(out)*out=RED4ext::CString(value);
+}
+void DoseCount(Context*,Frame* f,int32_t* out,int64_t){f->code++;std::lock_guard lock(guard);if(out)*out=static_cast<int32_t>(doseCatalog.size());}
+void DoseValue(Context*,Frame* f,RED4ext::CString* out,int64_t){int32_t index=0;RED4ext::CString field;RED4ext::GetParameter(f,&index);RED4ext::GetParameter(f,&field);f->code++;std::lock_guard lock(guard);const auto dose=Dose(index);std::string value;
+    if(field=="quantity"){int64_t count=0;if(snapshot.contains("items"))for(const auto& item:snapshot["items"])if(item.value("product",false)&&item.value("key",std::string())==dose.value("key",std::string()))count+=item.value("quantity",0);value=std::to_string(std::clamp<int64_t>(count,0,INT32_MAX));}
+    else if(field=="sellPrice"){value=std::to_string(dose.value("sellPrice",0));if(snapshot.contains("items"))for(const auto& item:snapshot["items"])if(item.value("product",false) && item.value("key",std::string())==dose.value("key",std::string()) && item.value("quantity",0)>0){value=std::to_string(static_cast<int>(item.value("price",0.0)/item.value("quantity",1)*10.0));break;}}
+    else if(dose.contains(field.c_str())){auto item=dose[field.c_str()];value=item.is_string()?item.get<std::string>():item.dump();}if(out)*out=RED4ext::CString(value);
+}
+void Consume(Context*,Frame* f,bool* out,int64_t){RED4ext::CString id,key;RED4ext::GetParameter(f,&id);RED4ext::GetParameter(f,&key);f->code++;std::lock_guard lock(guard);if(out)*out=false;if(outgoing.size()>=32||!doseCatalog.contains(key.c_str()))return;
+    outgoing.push_back({{"op","consume"},{"id",id.c_str()},{"key",key.c_str()},{"session",snapshot.value("session",std::string())}});replies.erase(id.c_str());if(out)*out=true;
+}
+void DrugVisual(Context*,Frame* f,void*,int64_t){float saturation=1,vignette=0;RED4ext::GetParameter(f,&saturation);RED4ext::GetParameter(f,&vignette);f->code++;
+    if(!drugView){drugMapping=CreateFileMappingW(INVALID_HANDLE_VALUE,nullptr,PAGE_READWRITE,0,32,L"Local\\StreetChem.Drug.v1");if(drugMapping)drugView=static_cast<uint8_t*>(MapViewOfFile(drugMapping,FILE_MAP_WRITE,0,0,32));}if(!drugView)return;
+    auto seq=reinterpret_cast<volatile LONG*>(drugView+4);InterlockedIncrement(seq);*reinterpret_cast<uint32_t*>(drugView)=0x53434452;*reinterpret_cast<uint64_t*>(drugView+8)=GetTickCount64();*reinterpret_cast<float*>(drugView+16)=saturation;*reinterpret_cast<float*>(drugView+20)=vignette;MemoryBarrier();InterlockedIncrement(seq);
+}
 void Report(Context*,Frame* f,void*,int64_t){
     RED4ext::CString report;RED4ext::GetParameter(f,&report);f->code++;
     static uint64_t next=0;if(GetTickCount64()<next)return;next=GetTickCount64()+1000;
@@ -114,7 +152,7 @@ void Hotkey(Context*,Frame* f,bool* out,int64_t){int32_t key=0,mask=0;RED4ext::G
 void Request(Context*,Frame* f,bool* out,int64_t){
     RED4ext::CString op,id,payload;RED4ext::GetParameter(f,&op);RED4ext::GetParameter(f,&id);RED4ext::GetParameter(f,&payload);f->code++;if(out)*out=false;
     try {if(strlen(payload.c_str())>16384)return;Json request=Json::parse(payload.c_str());if(!request.is_object())return;request["op"]=op.c_str();request["id"]=id.c_str();
-        std::lock_guard lock(guard);if(outgoing.size()>=32)return;replies.erase(id.c_str());outgoing.push_back(std::move(request));if(out)*out=true;
+        std::lock_guard lock(guard);if(outgoing.size()>=32)return;if(std::string(op.c_str()).starts_with("buy_"))request["session"]=snapshot.value("session",std::string());replies.erase(id.c_str());outgoing.push_back(std::move(request));if(out)*out=true;
     }catch(const std::exception&){}
 }
 void Value(Context*,Frame* f,RED4ext::CString* out,int64_t){RED4ext::CString id,key;RED4ext::GetParameter(f,&id);RED4ext::GetParameter(f,&key);f->code++;std::lock_guard lock(guard);std::string value;
@@ -178,6 +216,9 @@ void Register() {
     };
     add("SC_Key",Key,"Bool",{{"Int32","key"}});add("SC_Count",Count,"Int32");add("SC_Connected",Connected,"Bool");
     add("SC_Report",Report,"Void",{{"String","report"}});
+    add("SC_Clock",Clock,"Float");add("SC_ShopCount",ShopCount,"Int32");add("SC_ShopValue",ShopValue,"String",{{"Int32","index"},{"String","field"}});
+    add("SC_DoseCount",DoseCount,"Int32");add("SC_DoseValue",DoseValue,"String",{{"Int32","index"},{"String","field"}});
+    add("SC_Consume",Consume,"Bool",{{"String","id"},{"String","key"}});add("SC_DrugVisual",DrugVisual,"Void",{{"Float","saturation"},{"Float","vignette"}});
     add("SC_ProductSlot",ProductSlot,"Int32",{{"Int32","index"}});add("SC_RunnerCount",RunnerCount,"Int32");add("SC_RunnerValue",RunnerValue,"String",{{"Int32","index"},{"String","key"}});
     add("SC_Name",ProductName,"String",{{"Int32","index"}});add("SC_Quantity",Quantity,"Int32",{{"Int32","index"}});add("SC_Price",Price,"Int32",{{"Int32","index"}});
     add("SC_Status",Status,"String",{{"String","id"}});add("SC_Error",Error,"String");add("SC_NewID",NewID,"String");
@@ -195,9 +236,9 @@ void Register() {
 }
 }
 RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::v1::PluginHandle,RED4ext::v1::EMainReason reason,const RED4ext::v1::Sdk*){
-    if(reason==RED4ext::v1::EMainReason::Load){RED4ext::CRTTISystem::Get()->AddPostRegisterCallback(Register);running=true;worker=std::thread(Run);keyboardWorker=std::thread(RunKeys);}
-    if(reason==RED4ext::v1::EMainReason::Unload){running=false;if(worker.joinable())worker.join();if(keyboardWorker.joinable())keyboardWorker.join();if(poseView)UnmapViewOfFile(poseView);if(poseMapping)CloseHandle(poseMapping);}
+    if(reason==RED4ext::v1::EMainReason::Load){LoadCatalog();RED4ext::CRTTISystem::Get()->AddPostRegisterCallback(Register);running=true;worker=std::thread(Run);keyboardWorker=std::thread(RunKeys);}
+    if(reason==RED4ext::v1::EMainReason::Unload){running=false;if(worker.joinable())worker.join();if(keyboardWorker.joinable())keyboardWorker.join();if(poseView)UnmapViewOfFile(poseView);if(poseMapping)CloseHandle(poseMapping);if(drugView)UnmapViewOfFile(drugView);if(drugMapping)CloseHandle(drugMapping);}
     return true;
 }
-RED4EXT_C_EXPORT void RED4EXT_CALL Query(RED4ext::v1::PluginInfo* info){info->name=L"Street Chem Host";info->author=L"zrock / Codex";info->version=RED4EXT_V1_SEMVER(0,1,0);info->runtime=RED4EXT_V1_RUNTIME_VERSION_LATEST;info->sdk=RED4EXT_V1_SDK_VERSION_CURRENT;}
+RED4EXT_C_EXPORT void RED4EXT_CALL Query(RED4ext::v1::PluginInfo* info){info->name=L"Street Chem Host";info->author=L"zrock / Codex";info->version=RED4EXT_V1_SEMVER(0,2,0);info->runtime=RED4EXT_V1_RUNTIME_VERSION_LATEST;info->sdk=RED4EXT_V1_SDK_VERSION_CURRENT;}
 RED4EXT_C_EXPORT uint32_t RED4EXT_CALL Supports(){return RED4EXT_API_VERSION_1;}

@@ -2,11 +2,11 @@ param()
 $ErrorActionPreference='Stop'
 $root=Split-Path -Parent $PSScriptRoot
 $failures=@()
-$required=@('README.md','LICENSE','CREDITS.md','THIRD_PARTY_NOTICES.md','VERSION','CHANGELOG.md','docs\INSTALL.md','docs\CONTROLS.md','docs\TROUBLESHOOTING.md','docs\TESTING.md')
+$required=@('README.md','LICENSE','CREDITS.md','THIRD_PARTY_NOTICES.md','VERSION','CHANGELOG.md','docs\INSTALL.md','docs\CONTROLS.md','docs\CONSUMABLES.md','docs\TROUBLESHOOTING.md','docs\TESTING.md')
 foreach($file in $required){if(!(Test-Path -LiteralPath (Join-Path $root $file))){$failures+="Missing required file: $file"}}
 foreach($file in Get-ChildItem -LiteralPath $root -File -Recurse){
  $relative=[IO.Path]::GetRelativePath($root,$file.FullName)
- if($relative -match '(^|[\\/])(bin|obj|build|dist|\.git)([\\/]|$)'){continue}
+ if($relative -match '(^|[\\/])(bin|obj|build|dist|\.git|\.deps)([\\/]|$)'){continue}
  if($file.Name -match '^\.env' -or $file.Extension -in @('.dll','.exe','.pdb','.archive','.assets','.bundle')){$failures+="Unexpected source file: $relative";continue}
  $body=Get-Content -LiteralPath $file.FullName -Raw
  if($body -match '\bgh[pousr]_[A-Za-z0-9]{30,}|\bsk-(?:proj-)?[A-Za-z0-9]{32,}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----'){$failures+="Possible secret: $relative"}

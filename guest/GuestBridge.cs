@@ -9,7 +9,7 @@ using Il2CppScheduleOne.PlayerScripts;
 using Il2CppScheduleOne.Product;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(StreetChem.GuestBridge), "Street Chem Guest Bridge", "0.1.0", "zrock / Codex")]
+[assembly: MelonInfo(typeof(StreetChem.GuestBridge), "Street Chem Guest Bridge", "0.2.0", "zrock / Codex")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 namespace StreetChem;
 
@@ -45,7 +45,8 @@ public sealed class GuestBridge : MelonMod
             if(request.Reply.Task.IsCompleted) continue;
             try {
                 var op=request.Request.GetProperty("op").GetString();
-                object result=op switch { "clock" => GuestClock.Status(), "wake" => GuestClock.Wake(), "runners" => new {ok=true,runners=GuestRunners.Catalog()}, "runner_stock" => GuestRunners.Stock(request.Request), "pack" => new {ok=true,status="packed",quantity=GuestGrowing.PackInventory()}, "adopt" => liveVisual.Adopt(), "save" => SaveGuest(), "save_status" => new {ok=true,saving=SaveManager.Instance.IsSaving,error=SaveManager.SaveError}, "api" => DescribeApi(), "placement_status" => world.State(request.Request), "bind" => liveVisual.Bind(request.Request), "grow" => GuestGrowing.Act(request.Request), "pot_status" => GuestGrowing.Status(request.Request.GetProperty("guid").GetString()??""), "layout" => GuestWorld.Layout(), "place" => world.Create(request.Request), "use" => world.Use(request.Request), "equipment" => GuestEquipment.Catalog(), "equipment_preview" => equipmentVisual.Preview(request.Request.GetProperty("equipment").GetString() ?? ""), "world_visual" => WorldVisual(request.Request), "observe" => Observe(), "load_last" => LoadLast(), "reserve" or "commit" or "abort" or "collect" => sales.Handle(request.Request), _ => new {ok=false,error="unknown_operation"} };
+                if(op=="consume") {request.Reply.TrySetResult(JsonSerializer.Serialize(sales.Consume(request.Request)));continue;}
+                object result=op switch { "clock" => GuestClock.Status(), "wake" => GuestClock.Wake(), "runners" => new {ok=true,runners=GuestRunners.Catalog()}, "runner_stock" => GuestRunners.Stock(request.Request), "pack" => new {ok=true,status="packed",quantity=GuestGrowing.PackInventory()}, "adopt" => liveVisual.Adopt(), "save" => SaveGuest(), "save_status" => new {ok=true,saving=SaveManager.Instance.IsSaving,error=SaveManager.SaveError}, "api" => DescribeApi(), "placement_status" => world.State(request.Request), "bind" => liveVisual.Bind(request.Request), "grow" => GuestGrowing.Act(request.Request), "pot_status" => GuestGrowing.Status(request.Request.GetProperty("guid").GetString()??""), "layout" => GuestWorld.Layout(), "place" => world.Create(request.Request), "use" => world.Use(request.Request), "equipment" => GuestEquipment.Catalog(), "equipment_preview" => equipmentVisual.Preview(request.Request.GetProperty("equipment").GetString() ?? ""), "world_visual" => WorldVisual(request.Request), "observe" => Observe(), "load_last" => LoadLast(), "buy_reserve" or "buy_commit" or "buy_abort" or "reserve" or "commit" or "abort" or "collect" => sales.Handle(request.Request), _ => new {ok=false,error="unknown_operation"} };
                 request.Reply.TrySetResult(JsonSerializer.Serialize(result));
             } catch(Exception e) { request.Reply.TrySetResult(JsonSerializer.Serialize(new {ok=false,error=e.GetType().Name,detail=e.Message})); }
         }
@@ -111,10 +112,11 @@ public sealed class GuestBridge : MelonMod
                 var item=slot.ItemInstance;
                 if(item==null) continue;
                 var product=item.TryCast<ProductItemInstance>();
-                items.Add(new {slot=i,id=item.ID,name=item.Name,quantity=slot.Quantity,product=product!=null,quality=product?.Quality.ToString(),packaging=product?.PackagingID,amount=product?.Amount,price=product?.GetMonetaryValue()});
+                if(product!=null)GuestConsumables.ExportIcon(product);
+                items.Add(new {slot=i,id=item.ID,name=item.Name,quantity=slot.Quantity,product=product!=null,quality=product?.Quality.ToString(),packaging=product?.PackagingID,amount=product?.Amount,price=product?.GetMonetaryValue(),key=product==null?null:GuestConsumables.Key(product),family=product==null?null:GuestConsumables.Family(product)});
             }
         }
         Application.runInBackground=true;
-        return new {ok=true,loaded=load?.IsGameLoaded==true,session=load?.LoadedGameFolderPath,player=Player.Local?.PlayerName,position=Player.Local==null?null:new {x=Player.Local.transform.position.x,y=Player.Local.transform.position.y,z=Player.Local.transform.position.z},runners=GuestRunners.Catalog(),clock=GuestClock.Status(),inputActive=input.Active,motion=new {x=Il2CppScheduleOne.GameInput.MotionAxis.x,y=Il2CppScheduleOne.GameInput.MotionAxis.y},items};
+        return new {ok=true,loaded=load?.IsGameLoaded==true,session=load?.LoadedGameFolderPath,player=Player.Local?.PlayerName,position=Player.Local==null?null:new {x=Player.Local.transform.position.x,y=Player.Local.transform.position.y,z=Player.Local.transform.position.z},shop=load?.IsGameLoaded==true?GuestShop.Catalog():Array.Empty<object>(),runners=GuestRunners.Catalog(),clock=GuestClock.Status(),inputActive=input.Active,motion=new {x=Il2CppScheduleOne.GameInput.MotionAxis.x,y=Il2CppScheduleOne.GameInput.MotionAxis.y},items};
     }
 }

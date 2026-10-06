@@ -146,6 +146,7 @@ public class StreetChemCitySystem extends ScriptableSystem {
     this.TickSale(player, now);
     runnerSystem.Tick(player, this, now);
     sellPressed = SC_Hotkey(83, 1);
+    if (GameInstance.GetScriptableSystemsContainer(player.GetGame()).Get(n"StreetChemDealerSystem") as StreetChemDealerSystem).Interact(player, this, cameraPosition, forward, sellPressed) { return; }
     runnerHandled = runnerSystem.Interact(player, this, cameraPosition, forward, sellPressed);
     if !runnerSystem.MenuOpen() && SC_Hotkey(78, 1) {
       if SC_Count() == 0 { this.Notify(player, "No product stock. Harvest a mature plant first."); }
@@ -153,7 +154,7 @@ public class StreetChemCitySystem extends ScriptableSystem {
     }
     if sellPressed && !runnerHandled && Equals(this.saleID, n"") {
       npc = GameInstance.GetTargetingSystem(player.GetGame()).GetLookAtObject(player, true, true) as ScriptedPuppet;
-      if !IsDefined(npc) || !(npc.IsCrowd() || npc.IsCivilian()) || npc.IsCharacterPolice() || !npc.IsActive() || npc.IsAggressive() || Vector4.Distance(player.GetWorldPosition(), npc.GetWorldPosition()) > 4.0 {
+      if !IsDefined(npc) || !(npc.IsCrowd() || npc.IsCivilian()) || npc.IsCharacterPolice() || !npc.IsActive() || npc.IsAggressive() || StreetChemDealerSystem.IsDealer(npc) || Vector4.Distance(player.GetWorldPosition(), npc.GetWorldPosition()) > 4.0 {
         this.Notify(player, "Look at a living civilian within 4 metres to sell.");
       } else {
         if this.OnCooldown(npc.GetEntityID(), now) { this.Notify(player, "This customer just bought. Try someone else."); }
@@ -289,7 +290,8 @@ public class StreetChemCitySystem extends ScriptableSystem {
     }
   }
   public final func World() -> Int32 { return this.worldKey; }
-  public final func SaleBusy() -> Bool { return NotEquals(this.saleID, n""); }
+  public final func ConsumablesReady() -> Bool { return this.storageReady && Equals(NameToString(this.guestSession), SC_Session()); }
+  public final func SaleBusy() -> Bool { return NotEquals(this.saleID, n"") || (GameInstance.GetScriptableSystemsContainer(this.GetGameInstance()).Get(n"StreetChemDealerSystem") as StreetChemDealerSystem).Busy(); }
   public final func BuyerCooling(id: EntityID, now: Float) -> Bool { return this.OnCooldown(id, now); }
   private final func ReserveSale() -> Void {
     if Equals(this.saleKind, n"runner") { SC_RunnerReserve(NameToString(this.saleID), NameToString(this.saleDealer)); }

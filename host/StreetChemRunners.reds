@@ -72,7 +72,7 @@ public class StreetChemRunnerSystem extends IScriptable {
         this.Stop(runner); runner.deployed = false; city.Notify(player, "Runner released. Stock and earnings stay with your Schedule I dealer.");
       } else {
         body = GameInstance.GetTargetingSystem(player.GetGame()).GetLookAtObject(player, true, true) as NPCPuppet;
-        if !IsDefined(body) || !(body.IsCrowd() || body.IsCivilian()) || body.IsQuest() || !body.IsActive() || body.IsCharacterPolice() || body.IsAggressive() || Vector4.Distance(player.GetWorldPosition(), body.GetWorldPosition()) > 5.0 || this.IsRunner(body.GetEntityID()) {
+        if !IsDefined(body) || !(body.IsCrowd() || body.IsCivilian()) || StreetChemDealerSystem.IsDealer(body) || body.IsQuest() || !body.IsActive() || body.IsCharacterPolice() || body.IsAggressive() || Vector4.Distance(player.GetWorldPosition(), body.GetWorldPosition()) > 5.0 || this.IsRunner(body.GetEntityID()) {
           city.Notify(player, "Aim at a living ambient civilian within 5 metres, then Ctrl+K. Story characters are excluded."); return;
         }
         if !IsDefined(body.GetAIControllerComponent()) { city.Notify(player, "This civilian cannot take walking commands. Try another."); return; }
@@ -93,7 +93,7 @@ public class StreetChemRunnerSystem extends IScriptable {
             if !IsDefined(runner.target) && now >= runner.nextSearch {
               runner.nextSearch = now + 3.0; nearby = player.GetNPCsAroundObject(20.0); j = 0;
               while j < ArraySize(nearby) {
-                if (nearby[j].IsCrowd() || nearby[j].IsCivilian()) && nearby[j].IsActive() && !nearby[j].IsCharacterPolice() && !nearby[j].IsAggressive() && !this.IsRunner(nearby[j].GetEntityID()) && !city.BuyerCooling(nearby[j].GetEntityID(), now) {
+                if (nearby[j].IsCrowd() || nearby[j].IsCivilian()) && nearby[j].IsActive() && !nearby[j].IsCharacterPolice() && !nearby[j].IsAggressive() && !StreetChemDealerSystem.IsDealer(nearby[j]) && !this.IsRunner(nearby[j].GetEntityID()) && !city.BuyerCooling(nearby[j].GetEntityID(), now) {
                   route = GameInstance.GetAINavigationSystem(player.GetGame()).CalculatePathForCharacter(runner.body.GetWorldPosition(), nearby[j].GetWorldPosition(), 0.5, runner.body);
                   if IsDefined(route) && ArraySize(route.path) > 0 {
                     runner.target = nearby[j]; runner.deadline = now + 25.0; runner.command = new AIMoveToCommand();

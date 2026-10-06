@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
-    <AssemblyName>StreetChem.Guest</AssemblyName><Version>0.1.0</Version>
+    <AssemblyName>StreetChem.Guest</AssemblyName><Version>0.2.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony"><HintPath>$(MelonLoaderDir)/net6/0Harmony.dll</HintPath><Private>false</Private></Reference>

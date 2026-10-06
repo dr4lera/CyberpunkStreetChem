@@ -1,5 +1,7 @@
 # Street Chem controls
 
+**Inventory consumables (v0.2.0):** open Cyberpunk's Inventory → Backpack → Consumables, select your native product, and use the normal Consume / Use action. No extra hotkey is required. See [CONSUMABLES.md](CONSUMABLES.md) for effects, crashes and package sizes.
+
 Run Cyberpunk 2077 and Schedule I together. Load your paired saves in both games. Play and use these shortcuts in Cyberpunk. No function keys are required.
 
 | Shortcut | Action |
@@ -16,7 +18,13 @@ Run Cyberpunk 2077 and Schedule I together. Load your paired saves in both games
 | **Ctrl+J** | Cycle your recruited Schedule I dealers. Shows selected runner, stock, and collectable earnings. |
 | **Ctrl+K** | Assign the selected dealer to an aimed ambient Night City civilian within five metres. If that dealer has an active body, releases them instead; aim and press again to reassign. |
 | **Ctrl+Shift+B** | Recover an unlinked existing Schedule I tent at the floor you aim at. Preserves its plant and costs nothing. Prefers a planted tent. |
+| **Ctrl+Shift+Y** | Teleport to V’s original H10 apartment for testing, outside combat; requires both paired saves. |
 | **Ctrl+Alt+L** | Toggle the separate full-screen transport diagnostic. Leave it off for ordinary Night City play. |
+
+## Apartment dealer
+
+Approach the dealer in the **H10 hallway outside V’s original apartment** and look at him within four metres. Select **Browse drugs** using Cyberpunk’s normal interaction button. Buy through the native vendor screen and close it using the game’s normal Back action. The shop has unlimited supply and replenishes after purchases. No separate shopping hotkeys are required. Read [DEALER.md](DEALER.md).
+
 
 ## First crop
 
@@ -44,7 +52,7 @@ This release is solo only. Multiplayer is not included.
 
 ## Saving and recovery
 
-Create a Cyberpunk **manual save after your first placement, a recovery, and sales**. The mod requests autosaves, but the game can delay or refuse them. Load the latest paired saves when returning. Schedule I saves production changes and sales using its native save system.
+Create a Cyberpunk **manual save after your first placement, a recovery, sales, and dealer purchases**. The mod requests autosaves, but the game can delay or refuse them. Load the latest paired saves when returning. Schedule I saves production changes and sales using its native save system.
 
 The mod's anchor and receipt files live in `%LOCALAPPDATA%\StreetChem`. Keep this folder alongside game save backups. Loading an older Cyberpunk save can roll back eddies while Schedule I retains a newer stock debit; arbitrary mismatched save rollback is not supported.
 
@@ -52,4 +60,4 @@ If a tent is absent, first confirm Schedule I has loaded the correct save. Use *
 
 After restarting, load both saves and allow Schedule I to finish loading before using mod controls. A running Schedule I main menu is not a loaded business. Its pause menu also stops native growing. In Cyberpunk, close menus before using shortcuts.
 
-This is the first experimental solo release. These controls describe the included growing and selling loop; verification is recorded in docs/TESTING.md. Native Night City depth occlusion, collision, additional equipment, and broader economy/progression features remain unfinished.
+This is the experimental v0.2.0 solo release, “V is Using now.” It adds inventory consumables to the growing and selling loop; verification is recorded in docs/TESTING.md. Native Night City depth occlusion, collision, additional equipment, and broader economy/progression features remain unfinished.

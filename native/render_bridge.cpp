@@ -113,6 +113,15 @@ void guest_present(effect_runtime* runtime) {
     s.pending = true;
 }
 void host_effects(effect_runtime* runtime, command_list*, resource_view, resource_view) {
+    // Separate watchdog-controlled drug color state, independent of the guest equipment frame.
+    static HANDLE drugMap=nullptr;static const uint8_t* drugState=nullptr;
+    if(!drugState){drugMap=OpenFileMappingW(FILE_MAP_READ,FALSE,L"Local\\StreetChem.Drug.v1");if(drugMap)drugState=static_cast<const uint8_t*>(MapViewOfFile(drugMap,FILE_MAP_READ,0,0,32));}
+    float saturation=1.0f,vignette=0.0f;
+    if(drugState){const auto sequence=*reinterpret_cast<const volatile LONG*>(drugState+4);const auto tick=*reinterpret_cast<const uint64_t*>(drugState+8);const auto now=GetTickCount64();
+        if(!(sequence&1)&&*reinterpret_cast<const uint32_t*>(drugState)==0x53434452&&now>=tick&&now-tick<1500){saturation=*reinterpret_cast<const float*>(drugState+16);vignette=*reinterpret_cast<const float*>(drugState+20);MemoryBarrier();if(sequence!=*reinterpret_cast<const volatile LONG*>(drugState+4)){saturation=1;vignette=0;}}
+    }
+    const auto sat=runtime->find_uniform_variable(effect,"SCSaturation");if(sat.handle)runtime->set_uniform_value_float(sat,saturation);
+    const auto vig=runtime->find_uniform_variable(effect,"SCVignette");if(vig.handle)runtime->set_uniform_value_float(vig,vignette);
     const auto it = states.find(runtime);
     if (it == states.end()) return;
     auto& s = *it->second;

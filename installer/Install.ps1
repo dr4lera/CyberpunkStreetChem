@@ -12,6 +12,8 @@ $cpBin=Join-Path $cp 'bin\x64'
 $cpExe=Join-Path $cpBin 'Cyberpunk2077.exe'
 $siExe=Join-Path $si 'Schedule I.exe'
 foreach($path in @($cpExe,$siExe,(Join-Path $cp 'red4ext\RED4ext.dll'),(Join-Path $si 'MelonLoader\net6\MelonLoader.dll'),(Join-Path $cpBin 'ReShade.ini'))){if(!(Test-Path -LiteralPath $path)){throw "Missing game/dependency: $path. Read docs/INSTALL.md."}}
+if(!(Test-Path -LiteralPath (Join-Path $cp 'red4ext\plugins\TweakXL\TweakXL.dll'))){throw 'TweakXL is required for Cyberpunk inventory consumables. Install it from its official project.'}
+if(!(Test-Path -LiteralPath (Join-Path $cp 'red4ext\plugins\Codeware\Codeware.dll'))){throw 'Codeware is required for the H10 apartment dealer. Install it from its official project.'}
 foreach($process in @(Get-Process Cyberpunk2077,'Schedule I' -ErrorAction SilentlyContinue)){if($process.Path -eq $cpExe -or $process.Path -eq $siExe){throw 'Close both selected games first. This installer does not stop them or change saves.'}}
 if(!$ReShadeIncludePath){
  foreach($candidate in @((Join-Path $cpBin 'reshade-shaders\Shaders\ReShade.fxh'),(Join-Path $cpBin 'streetchem\shaders\ReShade.fxh'))){if(Test-Path -LiteralPath $candidate){$ReShadeIncludePath=$candidate;break}}
@@ -25,7 +27,7 @@ foreach($row in $files){
  if($row.path.StartsWith('payload/cyberpunk/')){$plan+=@{source=(Join-Path $PSScriptRoot $row.path);target=(Join-Path $cp $row.path.Substring(18))}}
  elseif($row.path.StartsWith('payload/schedule-i/')){$plan+=@{source=(Join-Path $PSScriptRoot $row.path);target=(Join-Path $si $row.path.Substring(19))}}
 }
-if($plan.Count -ne 7){throw 'Unexpected payload layout'}
+if($plan.Count -ne 9){throw 'Unexpected payload layout'}
 $hostConfig=Join-Path $cpBin 'ReShade.ini'
 $config=Get-Content -LiteralPath $hostConfig -Raw
 $match=[regex]::Match($config,'(?m)^PresetPath=(.*)$')
@@ -58,7 +60,7 @@ foreach($key in @('Techniques','TechniqueSorting')){
  $presetText=Set-Key $presetText $key $value
 }
 $changed=@($plan.target)+@((Join-Path $cpBin 'streetchem\shaders\ReShade.fxh'),$hostConfig,$preset)
-if(!$PSCmdlet.ShouldProcess(($cp+' and '+$si),'Install seven solo mod files and configure the StreetChem ReShade effect')){return}
+if(!$PSCmdlet.ShouldProcess(($cp+' and '+$si),'Install nine solo mod files and configure the StreetChem ReShade effect')){return}
 $backup=Join-Path $BackupRoot ((Get-Date -Format 'yyyyMMdd-HHmmss')+'-'+[guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $backup -Force | Out-Null
 $journal=@();$index=0
@@ -81,5 +83,5 @@ try {
  foreach($row in $journal){if($row.existed){Copy-Item -LiteralPath (Join-Path $backup $row.backup) -Destination $row.path -Force}else{if(Test-Path -LiteralPath $row.path){Remove-Item -LiteralPath $row.path}}}
  throw
 }
-Write-Output "Installed Street Chem solo v0.1.0. Backup: $backup"
+Write-Output "Installed Street Chem solo v$((Get-Content -LiteralPath (Join-Path $PSScriptRoot 'VERSION') -Raw).Trim()). Backup: $backup"
 Write-Output 'Start both games and load paired saves. Read docs/CONTROLS.md. No saves were modified.'

@@ -1,4 +1,4 @@
-// Street Chem solo v0.1.0 camera loop. Ordinary-key controls are in StreetChemCity.reds.
+// Street Chem solo v0.2.0 camera loop. Ordinary-key controls are in StreetChemCity.reds.
 public native func SC_Key(key: Int32) -> Bool;
 public native func SC_Camera(position: Vector4, forward: Vector4, up: Vector4, fov: Float, aspect: Float) -> Void;
 public native func SC_Visual(equipment: String, position: Vector4, yaw: Float) -> Bool;
@@ -21,6 +21,8 @@ protected cb func OnGameAttached() -> Bool {
 @wrapMethod(PlayerPuppet)
 protected cb func OnDetach() -> Bool {
   this.scVisualActive = false;
+  (GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"StreetChemDealerSystem") as StreetChemDealerSystem).Stop(this);
+  (GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"StreetChemDoseSystem") as StreetChemDoseSystem).StopWeapon(this);
   GameInstance.GetDelaySystem(this.GetGame()).CancelDelay(this.scVisualDelay);
   wrappedMethod();
 }
@@ -32,6 +34,8 @@ protected cb func OnStreetChemVisualTick(evt: ref<StreetChemVisualTick>) -> Bool
   let camera: ref<CameraSystem>;
   let system: ref<StreetChemCitySystem>;
   if !this.scVisualActive { return false; }
+  (GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"StreetChemDoseSystem") as StreetChemDoseSystem).Tick(this);
+  (GameInstance.GetScriptableSystemsContainer(this.GetGame()).Get(n"StreetChemDealerSystem") as StreetChemDealerSystem).TickWorld(this);
   camera = GameInstance.GetCameraSystem(this.GetGame());
   if !GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsInMenu) && camera.GetActiveCameraWorldTransform(pose) {
     position = Transform.GetPosition(pose);
