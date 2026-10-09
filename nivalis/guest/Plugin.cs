@@ -537,4 +537,3 @@ public sealed class LeaseWatchdog : MonoBehaviour
     public LeaseWatchdog(IntPtr pointer) : base(pointer) { }
     public void Update() => Plugin.Active?.Tick();
 }
-
