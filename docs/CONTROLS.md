@@ -61,3 +61,9 @@ If a tent is absent, first confirm Schedule I has loaded the correct save. Use *
 After restarting, load both saves and allow Schedule I to finish loading before using mod controls. A running Schedule I main menu is not a loaded business. Its pause menu also stops native growing. In Cyberpunk, close menus before using shortcuts.
 
 This is the experimental v0.2.0 solo release, “V is Using now.” It adds inventory consumables to the growing and selling loop; verification is recorded in docs/TESTING.md. Native Night City depth occlusion, collision, additional equipment, and broader economy/progression features remain unfinished.
+
+## Nivalis businesses (v0.3.0)
+
+F to Talk to a labelled restaurant/bar manager; Q/E or Up/Down selects V's reply; F confirms; Goodbye/leaving closes it. Menu edits, opening hours, qualified native crews, all-business supply purchases, automatic-restock toggling and net settlements are in the replies. Start/pause business operations there.
+
+Ctrl+Alt+U starts the paired businesses; Ctrl+Alt+R requests every business's missing supplies; Ctrl+Alt+C settles net income/costs; Ctrl+Alt+A toggles continuous purchases. Nivalis starts held and requires the exact configured dedicated save. Keep all three paired saves and transaction journals. See [business guide](NIVALIS.md).

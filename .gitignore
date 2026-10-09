@@ -6,3 +6,9 @@ dist/
 *.user
 *.log
 .env*
+
+nivalis/native/build/
+launcher/publish/
+launcher/payload/
+*.sav
+*.token

@@ -15,3 +15,7 @@ This release includes no generated art/audio or fal assets. No affiliation with 
 
 - [Codeware](https://github.com/psiberx/cp2077-codeware), by psiberx, provides persistent NPC spawning. Installed separately.
 - [Appearance Menu Mod](https://github.com/MaximiliumM/appearancemenumod), by MaximiliumM and contributors, supplied references for H10 coordinates and the vanilla drug-dealer record. No AMM code or database is bundled.
+
+## Nivalis integration
+
+BGASM: Nivalis ModKit 0.6.1 (MIT), built from upstream commit 65ce1e01afdb1d56f171761ff1ff619a4ec148ec. BepInEx/Il2CppInterop authors provide the Nivalis loading/runtime route. Codeware/TweakXL provide native Cyberpunk spawning and records. Nivalis, Cyberpunk and Schedule I retail content belongs to their creators and is not included. Original bridge and manager code was implemented with Codex assistance for dr4lera.

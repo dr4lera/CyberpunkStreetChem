@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Version>0.1.0</Version>
+    <GameDir Condition="'$(GameDir)' == ''">$(NivalisPath)</GameDir>
+    <KitPath Condition="'$(KitPath)' == ''">$(NivalisModKitPath)</KitPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(GameDir)\BepInEx\core\BepInEx*.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GameDir)\BepInEx\core\Il2CppInterop.Runtime.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GameDir)\BepInEx\core\0Harmony.dll"><Private>false</Private></Reference>
+    <Reference Include="$(GameDir)\BepInEx\interop\*.dll"><Private>false</Private></Reference>
+    <Reference Include="NivalisModKit"><HintPath>$(KitPath)</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

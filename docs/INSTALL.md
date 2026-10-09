@@ -1,3 +1,5 @@
+> For the current three-game v0.3.0 release use [CYBERTRAP_INSTALL.md](CYBERTRAP_INSTALL.md). This page describes legacy v0.2.0.
+
 # Install solo v0.2.0
 
 Use Windows x64 and owned copies of Cyberpunk 2077 **2.31** and Schedule I **0.4.6f13 IL2CPP**. Run both games normally once before modding. Back up your own saves before trying a new mod.

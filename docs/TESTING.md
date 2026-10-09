@@ -67,3 +67,11 @@ Runner collection previously overflowed the wallet. This version bounds payouts 
 ## Limits
 
 Only the stated Windows/game/loader versions were used. No second PC/account was available; multiplayer is not shipped. Arbitrary mismatched retail-save rollback, all civilian AI variants, every graphics configuration and new installations on other computers have not been verified.
+
+## Nivalis / CyberTrap v0.3.0
+
+Verified on the documented retail builds: all 15 owned venues served real customers in bounded native business-day tests; native setup objectives empty after cold reload; 75 globally unique employees with correct workplaces, independent cook/server coverage and native skill caps; 64 added tables/256 chairs inside authored bounds; all venues have menus/seating/equipment. No fake stock or profit is used.
+
+Actual stock reservations, full-list delivery, unused-fund refunds and repeated same-day replenishment passed, including cold reload. Positive income and negative operating settlements reached V. An isolated paper-test mode prevents unsaved simulations from spending or collecting real host money. Failed tests were recovered from verified private checkpoints; private receipts/saves are not shipped.
+
+First manager placement/facing, business labels, reply highlighting and menu page opening passed in Cyberpunk. Wider testing of the other automatic restaurant/bar locations and menu/hour/crew edits remains necessary. Do not describe the mod as a finished total conversion or guarantee business profitability. Multiplayer, apartments, shared Schedule I interiors, hidden guests and the separate launcher remain outside this release.

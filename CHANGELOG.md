@@ -1,3 +1,12 @@
+# v0.3.0 — CyberTrap / Nivalis businesses
+
+- Added Nivalis guest and Cyberpunk business host source to the StreetChem mod repository.
+- Native restaurant/bar managers with business labels, V-style replies, menus/prices, hours, crews, supply purchases, net settlements and operation controls.
+- Independent qualified staff, safe authored dining expansion, compatible kitchen setup, continuous all-menu/all-list purchasing and preserved native wages/rent.
+- Dedicated-save mutation guards, curfew/story suppression, receipt recovery and isolated paper tests.
+- Three separate game-root packages and documentation for all three games.
+- Existing StreetChem v0.2.0 gameplay retained. Launcher/framework installer stays separate and is not part of this release.
+
 # Changelog
 
 ## 0.2.0 — V is Using now

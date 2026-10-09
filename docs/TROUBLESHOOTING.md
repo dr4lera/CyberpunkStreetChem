@@ -48,3 +48,14 @@ Solo only. No shared quests, combat or multiplayer. Equipment is a camera-matche
 Install Codeware 1.20.5 and load both paired saves. The dealer is in the H10 hallway. **Ctrl+Shift+Y** teleports home outside combat. Look at him within four metres and use the normal **Browse drugs** interaction. Existing matching stacks may exceed native capacity; a new variant needs a free Schedule I hotbar slot. Rejected reservations do not charge V.
 
 For a pending-purchase recovery warning, keep both paired saves and `%LOCALAPPDATA%\StreetChem` together. A mismatched stock/save rollback requires matching backups; repeated clicks cannot repair it. See [DEALER.md](DEALER.md).
+
+## Nivalis link / manager replies
+
+- No businesses: load the exact dedicated save, enable ModKit's local bridge/commands on port 5710, and check matching paths/save names in both configs. Restart after config edits. Check Nivalis BepInEx/Player logs and Cyberpunk red4ext/redscript logs.
+- A visible manager reports a loading link: wait for Nivalis to finish loading. The guarded loader requires a ready native title menu and refuses warm reloads. Do not send a second load while one is active.
+- Not operating/restocking: choose Start business operations. Cyberpunk pause, disconnect, held setup, an unsaved paper test or unfinished payment can block it. Automatic purchasing also needs eddies and native supplier stock.
+- Negative settlement: native wages/rent and ingredient replacement are real. Large first fills are inventory purchases, not profit. No profit guarantee is imposed.
+- A manager location is awkward: automatic native map-point/nav placement outside the first verified restaurant remains experimental. Preserve the paired save; report the location.
+- Recovery: never delete receipts/journals or repeatedly issue purchases. Restore all paired saves and matching financial state together from your own backups.
+
+The new launcher/framework installer, hidden guests and auto-loading are not included in v0.3.0. [Current installation](CYBERTRAP_INSTALL.md).

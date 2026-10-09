@@ -1,56 +1,44 @@
-# Street Chem — solo v0.2.0
+# CyberTrap / Street Chem — v0.3.0
 
-**V is Using now:** native inventory consumables, original locally converted product icons, timed highs with buffs, drawbacks and stronger color effects, and a drug dealer outside V’s H10 apartment.
+Play in Cyberpunk's Night City while Schedule I runs real growing, inventory, drug effects and dealers, and Nivalis Nights runs real restaurants and bars. Purchases and business settlements use V's eddies.
 
-Grow and sell Schedule I products in Cyberpunk's Night City. Both games run on your own PC: Schedule I owns the plants, product inventory and dealer earnings; you play and interact in Cyberpunk.
+**Experimental Windows x64 solo mods. All three games run locally.** The all-in-one launcher/framework installer is a separate development project and is not included in this release.
 
-**Experimental solo release. Multiplayer is not included.** Equipment uses a camera-matched image layer, so Night City walls do not yet occlude it and it does not create Cyberpunk collision. This is not a complete total conversion.
+## Downloads
 
-## Start here
+Use [published releases](https://github.com/dr4lera/CyberpunkStreetChem/releases), selecting v0.3.0. Automatic GitHub source ZIPs contain no playable binaries.
 
-1. Use the matching v0.2.0 Cyberpunk and Schedule I packages, or the combined installer ZIP. Mod managers need both game-specific halves. Automatic GitHub source-code ZIPs contain no playable binaries. [Published releases](https://github.com/dr4lera/CyberpunkStreetChem/releases) may include older builds; select the version explicitly.
-2. Install the required loaders and follow [installation](docs/INSTALL.md).
-3. Load your paired saves in both games, then play Cyberpunk. Schedule I must be loaded and unpaused.
-4. Aim at a flat floor: **Ctrl+B** buys a grow tent for 1200 eddies. Aim at its pot: **Ctrl+E** plants, waters or harvests according to its state. Harvest bags automatically.
-5. **Ctrl+N** selects product; aim at a civilian within four metres and **Ctrl+S** sells it.
-6. Open **Inventory → Backpack → Consumables** and use a Schedule I product through the normal **Consume / Use** action. Product names, quality and package counts follow your native stock. Read [consumables, buffs and crashes](docs/CONSUMABLES.md).
+- `CyberTrap-Cyberpunk2077-v0.3.0.zip`: StreetChem host/renderer/drug dealer and Nivalis business host/manager scripts.
+- `CyberTrap-ScheduleI-v0.3.0.zip`: native Schedule I guest bridge.
+- `CyberTrap-NivalisNights-v0.3.0.zip`: native business bridge and MIT-licensed ModKit 0.6.1, built from pinned upstream source.
 
-7. Visit the **H10 hallway drug dealer**, use the normal **Browse drugs** interaction, and buy packages in Cyberpunk’s vendor screen. Supply is unlimited. [Dealer guide](docs/DEALER.md).
+Read [installation for all three games](docs/CYBERTRAP_INSTALL.md), [Nivalis business guide](docs/NIVALIS.md), [controls](docs/CONTROLS.md), [troubleshooting](docs/TROUBLESHOOTING.md) and [verification](docs/TESTING.md).
 
+## Night City businesses
 
-For actual product artwork, run the [local icon converter](docs/CONSUMABLES.md#actual-native-product-icons). The public download contains the converter; your own Schedule I installation supplies the artwork.
+Managers reuse vanilla NPC models at existing restaurants and bars. Each is labelled with its Nivalis business. **F to Talk**, **Q/E or Up/Down** to select V's reply, then **F** to confirm. Replies cover status, menu prices, opening hours, native qualified crews, all-business supplies, income/cost settlements and starting/pausing operations.
 
-Read [all controls and runner instructions](docs/CONTROLS.md), [troubleshooting](docs/TROUBLESHOOTING.md), [verification](docs/TESTING.md), and [changelog](CHANGELOG.md).
+Nivalis owns ingredients, staff, equipment, seating, customers, reviews, wages and rent. Continuous purchasing targets ten servings of every menu dish plus the entire native shopping list. V pays the actual delivered-stock cost and receives/pays net operating settlements. The business simulation freezes when Cyberpunk is paused or disconnected. Profit is not guaranteed.
 
-## Included
+The tested sandbox has all 192 recipes and 15 ready venues with 20 dishes each, seating, all seven appliance types and 75 independent qualified employees. Normal saves remain observe-only; mutations require the exact configured dedicated save. Story dialogue and curfew are suppressed only there.
 
-- Native weed growing, automatic harvest/bagging and the native morning clock rollover.
-- Saved Night City tent anchors linked to actual Schedule I equipment.
-- Real stock debits and eddy payments for nearby civilian sales.
-- Cyberpunk civilian runner bodies linked to recruited Schedule I dealers.
-- Runner cash collection and giving stock through the Ctrl+S menu.
-- No function-key gameplay bindings and no automatic test-money grants.
-- A persistent native Cyberpunk drug dealer outside V’s original H10 apartment, with real Schedule I stock purchases.
-- A persistent native NPC drug dealer outside V’s original H10 apartment.
-- Accurate inventory eddy values matching civilian package selling prices.
-- Native Cyberpunk inventory consumables, shared stock debits, timed buffs/debuffs, firearm rate changes and drug color effects.
+## Street Chem
 
-## Requirements
+- **Ctrl+B** buys a grow tent on a flat floor; **Ctrl+E** plants, waters or harvests its pot. Harvest is bagged automatically.
+- **Ctrl+N** selects product; **Ctrl+S** near a civilian sells stock or manages a runner.
+- Consume native products through **Inventory → Backpack → Consumables** for timed highs, benefits and drawbacks.
+- Visit the H10 hallway dealer and choose **Browse drugs** for Cyberpunk's native vendor screen.
 
-Windows x64; owned copies of **Cyberpunk 2077 2.31** and **Schedule I 0.4.6f13 (IL2CPP)**; sufficient resources to run both. Tested loaders: RED4ext 1.30.0, redscript 0.5.31, MelonLoader 0.7.3, **TweakXL 1.11.4**, **Codeware 1.20.5** and ReShade 6.8.0 with full add-on support in Cyberpunk. TweakXL is required for inventory consumables; Codeware spawns the apartment dealer. The existing test setup also had ArchiveXL 1.27.3, which Street Chem does not directly call. Loaders are not bundled. Other versions/platforms have not been verified.
+Read [consumables](docs/CONSUMABLES.md), [dealer guide](docs/DEALER.md) and [runner controls](docs/CONTROLS.md). The optional local icon converter reads artwork from your own Schedule I installation; retail artwork is not distributed.
 
-The download contains this mod only. Install dependencies from their official projects. No game assets, saves, credentials or multiplayer prototype are included.
+## Requirements and limits
 
-## Repository layout
+Tested games: Cyberpunk **2.31**, Schedule I **0.4.6f13 IL2CPP**, Nivalis **1.0 patch 3 hotfix 25738165**. Exact framework versions and official sources: [installation](docs/CYBERTRAP_INSTALL.md).
 
-| Folder | Purpose |
-|---|---|
-| `host/` | Cyberpunk controls, placements, sales and runner behavior |
-| `guest/` | Schedule I native production/inventory/save bridge |
-| `native/` | RED4ext host plugin and ReShade image transport |
-| `generated/` | Committed transport/input constants |
-| `installer/` | Portable install and backup restoration |
-| `tools/` | Source build, release packaging and validation |
-| `docs/` | Installation, controls, testing and troubleshooting |
+Schedule equipment is an image layer: Night City walls do not occlude it and it adds no Cyberpunk collision. Multiplayer, apartments, shared Schedule I business premises, automatic three-game startup and hidden guests are not included in this mod release. Only the first restaurant manager has received live location testing; other automatic map-point placements need broader checks.
 
-For building from source, see [BUILD.md](docs/BUILD.md). Core mod code is MIT licensed. The separate optional IconCooker uses GPL-3.0-only; its source/license are included beside the converter. Retail game content remains with its owners. See [credits](CREDITS.md).
+## Source
+
+`host/`, `guest/`, `native/`: StreetChem. `nivalis/`: Nivalis guest and Cyberpunk business bridge. `docs/`: all three games. `tools/PackageCyberTrap.ps1`: current three-game packages. The older two-game installer is retained for legacy StreetChem builds.
+
+Original code is MIT licensed. AI-assisted implementation by Codex for dr4lera. Framework and ModKit authors retain their licenses and credit. No retail assemblies, assets, saves, tokens or private transaction journals are distributed. See [credits](CREDITS.md), [notices](THIRD_PARTY_NOTICES.md) and [build instructions](docs/BUILD.md).

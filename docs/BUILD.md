@@ -29,3 +29,11 @@ Packaging creates the combined installer ZIP plus separate Cyberpunk and Schedul
 Run source validation with `tools/Validate.ps1`; perform actual in-game checks before publishing a new supported version. A successful compile is not proof of gameplay behavior.
 
 Dealer scripts also require Codeware 1.20.5 when compiling locally. `GuestShop.cs` exports native offers; `GuestSales.cs` commits purchases; `StreetChemDealer.reds` owns NPC spawning and shopping. Install Codeware separately. Release payload: eight Cyberpunk files, one Schedule I DLL.
+
+## Nivalis source and three-game packages
+
+`nivalis/guest` targets .NET 6 with BepInEx IL2CPP interfaces from your owned Nivalis installation. Supply `-p:NivalisPath=<game-root>` and `-p:NivalisModKitPath=<locally built ModKit.dll>`. Build ModKit from upstream commit 65ce1e01afdb1d56f171761ff1ff619a4ec148ec; its MIT license must accompany its distributed DLL.
+
+`nivalis/native/build.cmd` uses `NC_RED4EXT_SDK_DIR` and `NC_JSON_INCLUDE_DIR`. Compile both script folders with redscript, Codeware and TweakXL interfaces. Do not publish retail/generated game assemblies.
+
+`tools/PackageCyberTrap.ps1 -ModKitPath <built DLL>` creates the current three normal game-root ZIPs and checksums. The all-in-one launcher/framework installer is developed separately and is not packaged here.
