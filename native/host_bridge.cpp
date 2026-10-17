@@ -15,6 +15,7 @@
 #include <chrono>
 #include <string>
 #include "world_store.hpp"
+#include "melty_test.hpp"
 using Json=nlohmann::json;
 namespace {
 std::atomic_bool running=false;
@@ -88,7 +89,11 @@ void Run() {
                 if(!response.value("ok",false))response["status"]="error";
                 if(request.contains("id"))response["id"]=request["id"];
                 std::lock_guard lock(guard);lastSuccess=now;
-                if(request["op"]=="observe"){RememberProducts(response);snapshot=std::move(response);}
+                if(request["op"]=="observe"){
+                    static bool tested=false;
+                    if(!tested && response.value("ok",false) && response.value("loaded",false)) { MeltyTestReport("guest-connected",true); tested=true; }
+                    RememberProducts(response);snapshot=std::move(response);
+                }
                 else {receipt=response;if(request.contains("id")){if(replies.size()>512)replies.erase(replies.begin());replies[request["id"].get<std::string>()]=std::move(response);}}
             }catch(const std::exception& e){
                 if(request.contains("id")){std::lock_guard lock(guard);receipt={{"ok",false},{"status","uncertain"},{"id",request["id"]},{"error",e.what()}};replies[request["id"].get<std::string>()]=receipt;}
@@ -136,6 +141,19 @@ void Report(Context*,Frame* f,void*,int64_t){
     try {auto row=Json::parse(report.c_str());row["pid"]=GetCurrentProcessId();row["world"]=scstore::data.value("world",0);row["tick"]=GetTickCount64();
         wchar_t local[32768]{};if(!GetEnvironmentVariableW(L"LOCALAPPDATA",local,32768))return;
         auto dir=std::filesystem::path(local)/L"StreetChem";std::filesystem::create_directories(dir);
+        static bool tested=false;
+        if(!tested){MeltyTestReport("host-gameplay",true);tested=true;}
+        if(!g_meltyChecks.empty()) {
+            std::ifstream testFile(std::filesystem::path(local)/L"Melty/test/first-experimental-solo-releas.json");
+            Json test;testFile>>test;
+            if(test.contains("state") && test["state"].is_string()) {
+                {std::lock_guard lock(guard);row["guestConnected"]=lastSuccess && GetTickCount64()-lastSuccess<3000;}
+                auto statePath=std::filesystem::path(MeltyWide(test["state"].get<std::string>()));
+                auto stateTemp=statePath;stateTemp+=L".tmp";
+                {std::ofstream state(stateTemp);state<<row.dump();}
+                MoveFileExW(stateTemp.c_str(),statePath.c_str(),MOVEFILE_REPLACE_EXISTING);
+            }
+        }
         auto path=dir/L"host-status.json";auto temp=dir/L"host-status.tmp";
         {std::ofstream output(temp);output<<row.dump(2);}MoveFileExW(temp.c_str(),path.c_str(),MOVEFILE_REPLACE_EXISTING);
     }catch(...){}
@@ -236,7 +254,7 @@ void Register() {
 }
 }
 RED4EXT_C_EXPORT bool RED4EXT_CALL Main(RED4ext::v1::PluginHandle,RED4ext::v1::EMainReason reason,const RED4ext::v1::Sdk*){
-    if(reason==RED4ext::v1::EMainReason::Load){LoadCatalog();RED4ext::CRTTISystem::Get()->AddPostRegisterCallback(Register);running=true;worker=std::thread(Run);keyboardWorker=std::thread(RunKeys);}
+    if(reason==RED4ext::v1::EMainReason::Load){MeltyTestStart();LoadCatalog();RED4ext::CRTTISystem::Get()->AddPostRegisterCallback(Register);running=true;worker=std::thread(Run);keyboardWorker=std::thread(RunKeys);}
     if(reason==RED4ext::v1::EMainReason::Unload){running=false;if(worker.joinable())worker.join();if(keyboardWorker.joinable())keyboardWorker.join();if(poseView)UnmapViewOfFile(poseView);if(poseMapping)CloseHandle(poseMapping);if(drugView)UnmapViewOfFile(drugView);if(drugMapping)CloseHandle(drugMapping);}
     return true;
 }

@@ -11,9 +11,9 @@
 - nlohmann/json: https://github.com/nlohmann/json (MIT); used in the native host binary.
 - WolvenKit Console / RED4 types: https://github.com/WolvenKit/WolvenKit (GPLv3). The standalone optional IconCooker is GPL-3.0-only, with its source and license in `tools/IconCooker`; the player supplies WolvenKit. Core mod code remains MIT.
 
-This release includes no generated art/audio or fal assets. No affiliation with either game's publisher or Melty is claimed. Dependency runtimes and shaders are downloaded from their official projects, not redistributed in this ZIP. Third-party header licenses included in THIRD_PARTY_NOTICES.md apply to embedded SDK/library portions.
+This release includes no generated art/audio or fal assets. No affiliation with the games' publishers or Melty is claimed. The 0.3.1 Melty package bundles unmodified, licensed dependency runtimes from their official projects. Their notices accompany the package; corresponding source links are in THIRD_PARTY_NOTICES.md. Game content and generated retail interfaces are never distributed.
 
-- [Codeware](https://github.com/psiberx/cp2077-codeware), by psiberx, provides persistent NPC spawning. Installed separately.
+- [Codeware](https://github.com/psiberx/cp2077-codeware), by psiberx, provides persistent NPC spawning; MIT-licensed 1.20.5 is bundled in the Melty setup.
 - [Appearance Menu Mod](https://github.com/MaximiliumM/appearancemenumod), by MaximiliumM and contributors, supplied references for H10 coordinates and the vanilla drug-dealer record. No AMM code or database is bundled.
 
 ## Nivalis integration

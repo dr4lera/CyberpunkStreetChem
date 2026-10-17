@@ -1,3 +1,16 @@
+# v0.3.1 — Melty setup and launch repair
+
+- At the creator's request, this release keeps Cyberpunk + Schedule I and temporarily removes Nivalis businesses. Nivalis is not required or started. Upgrades preserve but disable only this project's old Nivalis host files.
+
+- Make Schedule I and Nivalis required companions; install their bridges into their actual game folders rather than Cyberpunk or nowhere.
+- Include a self-contained Windows launcher, licensed Codeware, MelonLoader, BepInEx, ReShade full-add-on runtime, shader include and .NET runtime; declare RED4ext/redscript/TweakXL/ArchiveXL for Melty to install.
+- Configure paths and graphics effect automatically while preserving unrelated settings and backing up changed files; refuse unrelated proxy conflicts and already open games.
+- Start companions, wait for genuine native bridge replies, then launch the real Cyberpunk executable from its own working folder. Keep tracking the game for its whole lifetime; no short timeout or automatic process termination.
+- Native save Continue/dedicated-copy setup uses only the player's own games and saves. No developer saves, generated retail interfaces or credentials enter the package.
+- Record actionable startup failures; add genuine plugin-load, loaded guest, business-link and host-gameplay checks for Melty tests. Startup success alone does not pass gameplay checks.
+- Adapt the Schedule I clock to its 0.4.7 SleepController/time-skip API while keeping the older API path. Bound and isolate feature errors so they cannot stop the native control queue from replying. The installed-game test exposed a reproducible MissingMethodException in the old bridge before it could answer startup requests.
+- The two reported symptoms had no player logs. Missing/wrong installation steps are confirmed; the 45-second exit did not reproduce on the already configured development PC in a two-minute baseline run.
+
 # v0.3.0 — CyberTrap / Nivalis businesses
 
 - Added Nivalis guest and Cyberpunk business host source to the StreetChem mod repository.

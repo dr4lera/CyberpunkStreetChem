@@ -1,5 +1,12 @@
 # Submission information
 
+## Current: 0.3.1 automatic setup
+
+Listing title: CyberTrap2077. Listing ID: d352fdc7-2fd2-4405-bc85-ca04775dee58.
+The root `melty.json` describes one required complete archive and all three required owned games. Cyberpunk is always the primary host. Source and native builds precede `tools/PackageMelty.ps1`; dependency staging is outside tracked source under `.deps`. The launcher is a self-contained Windows build; players need no separate BAT or command prompt.
+
+Legacy instructions below describe older manual packages and are not the 0.3.1 Melty recipe.
+
 Release title: **v0.2.0 — V is Using now**. The two game-specific ZIPs install the mod halves; the optional combined ZIP provides the installer, documentation and local icon converter. Original product artwork is generated from each player's own installed Schedule I files using the converter; it is not distributed as a release asset.
 
 Use the GitHub repository and the two v0.2.0 game-specific release ZIPs: **StreetChem-Cyberpunk2077-v0.2.0.zip** for Cyberpunk and **StreetChem-ScheduleI-v0.2.0.zip** for Schedule I. Both halves are needed. They contain game-root mod files; the separate combined Solo ZIP offers the automatic install/restore scripts instead. Do not treat checksum files as mod downloads. This is an experimental local two-game passthrough: both owned games run on the same PC. The repository includes installation, controls, supported versions and credits/license.

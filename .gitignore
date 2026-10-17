@@ -12,3 +12,4 @@ launcher/publish/
 launcher/payload/
 *.sav
 *.token
+attachments/

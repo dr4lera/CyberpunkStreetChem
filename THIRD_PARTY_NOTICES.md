@@ -134,7 +134,25 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 
 SOFTWARE.
 
-Codeware is an external dependency. No Codeware binaries, scripts or retail NPC resources are included in these packages.
+## Melty 0.3.1 dependency bundle
+
+Final 0.3.1 scope is Cyberpunk + Schedule I. Nivalis, BepInEx and ModKit runtimes are excluded; their historical source/license records below remain for the repository's inactive Nivalis code. The installed runtime bundle is Codeware, MelonLoader, ReShade and .NET, plus the loaders Melty provides separately.
+
+Unmodified Codeware 1.20.5 (MIT, Pavel Siberx), MelonLoader 0.7.3 (Apache-2.0, LavaGang and contributors), BepInEx Unity IL2CPP build 788 / commit 5b766a3 (LGPL-2.1, BepInEx contributors), ReShade 6.8.0 full-add-on build (BSD-3-Clause, Patrick Mours), and Microsoft .NET runtimes (MIT and bundled third-party notices) accompany the setup. Full primary notices are in `CyberTrap/Docs/licenses`; MelonLoader's distributed Documentation/NOTICE.txt and LICENSE.md are retained. ReShade.fxh is CC0-1.0, as its header states. Libraries are unmodified and remain replaceable.
+
+Corresponding sources:
+
+- https://github.com/psiberx/cp2077-codeware/tree/v1.20.5
+- https://github.com/LavaGang/MelonLoader/tree/v0.7.3
+- https://github.com/BepInEx/BepInEx/tree/5b766a3
+- https://github.com/BepInEx/Il2CppInterop (interop runtime source, LGPL-2.1)
+- https://github.com/NeighTools/UnityDoorstop (native bootstrap source)
+- https://github.com/crosire/reshade/tree/v6.8.0
+- https://github.com/crosire/reshade-shaders
+- https://github.com/dotnet/runtime/tree/v6.0.36
+- https://github.com/dotnet/runtime (the launcher publication retains its runtime notices)
+
+No retail NPC resources are included. RED4ext, redscript, TweakXL and ArchiveXL are requested through Melty rather than repackaged.
 
 
 ## Nivalis ModKit 0.6.1

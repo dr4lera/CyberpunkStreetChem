@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "mode": "installed",
+  "games": [
+    {
+      "slug": "cyberpunk-2077",
+      "role": "primary",
+      "version": "3.0.80.51928"
+    },
+    {
+      "slug": "custom-schedule-i",
+      "role": "companion"
+    }
+  ],
+  "components": [
+    {
+      "id": "main",
+      "fileName": "CyberTrap-Melty-v0.3.1.zip",
+      "kind": "main",
+      "label": "Complete three-game setup",
+      "required": true
+    },
+    {
+      "id": "notices",
+      "fileName": "CyberTrap-Notices-v0.3.1.zip",
+      "required": true,
+      "kind": "extra",
+      "label": "Dependency licenses and corresponding sources"
+    }
+  ],
+  "mappings": [
+    {
+      "component": "main",
+      "from": "cyberpunk/",
+      "to": "{game}"
+    },
+    {
+      "component": "main",
+      "from": "schedule-i/",
+      "to": "{game:custom-schedule-i}"
+    },
+    {
+      "component": "notices",
+      "to": "{game}/CyberTrap/Docs/licenses",
+      "from": ""
+    }
+  ],
+  "requirements": [
+    {
+      "kind": "loader",
+      "id": "red4ext"
+    },
+    {
+      "kind": "loader",
+      "id": "redscript"
+    },
+    {
+      "kind": "loader",
+      "id": "tweakxl"
+    },
+    {
+      "kind": "loader",
+      "id": "archivexl"
+    }
+  ],
+  "launch": {
+    "kind": "exe",
+    "path": "{game}/CyberTrap/Launcher/CyberTrap.Launcher.exe",
+    "args": [
+      "--cyberpunk",
+      "{game}",
+      "--schedule",
+      "{game:custom-schedule-i}"
+    ]
+  },
+  "test": {
+    "minutes": 3,
+    "checks": [
+      "mod-loads",
+      "guest-connected",
+      "host-gameplay"
+    ]
+  }
+}

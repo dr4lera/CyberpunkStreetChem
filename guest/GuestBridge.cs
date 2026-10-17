@@ -9,7 +9,7 @@ using Il2CppScheduleOne.PlayerScripts;
 using Il2CppScheduleOne.Product;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(StreetChem.GuestBridge), "Street Chem Guest Bridge", "0.2.0", "zrock / Codex")]
+[assembly: MelonInfo(typeof(StreetChem.GuestBridge), "Street Chem Guest Bridge", "0.3.1", "zrock / Codex")]
 [assembly: MelonGame("TVGS", "Schedule I")]
 namespace StreetChem;
 
@@ -22,6 +22,16 @@ public sealed class GuestBridge : MelonMod
     readonly EquipmentVisual equipmentVisual = new();
     readonly GuestWorld world = new();
     readonly LiveEquipmentVisual liveVisual = new();
+    readonly Dictionary<string,float> nextWarning = new();
+    void TickSafely(string feature, Action tick) {
+        try { tick(); }
+        catch(Exception e) {
+            if(!nextWarning.TryGetValue(feature,out var next) || Time.unscaledTime>=next) {
+                nextWarning[feature]=Time.unscaledTime+30;
+                MelonLogger.Error(feature+" failed; the control bridge remains available: "+e);
+            }
+        }
+    }
     sealed record Pending(JsonElement Request, TaskCompletionSource<string> Reply);
     static readonly string[] relevant = {"PlayerScripts.Player", "PlayerScripts.PlayerInventory", "PlayerScripts.PlayerMovement", "PlayerScripts.PlayerCamera", "Product.ProductManager", "Product.ProductDefinition", "Product.ProductItemInstance", "ItemFramework.ItemSlot", "ItemFramework.ItemInstance", "Money.MoneyManager", "Loading.LoadManager", "GameInput"};
 
@@ -32,14 +42,14 @@ public sealed class GuestBridge : MelonMod
     }
     public override void OnUpdate()
     {
-        input.PollSharedMemory();
-        input.Tick();
-        sales.Tick();
-        world.Tick();
-        GuestClock.Tick();
-        GuestSave.Tick();
-        equipmentVisual.Tick();
-        liveVisual.Tick();
+        TickSafely("shared input",input.PollSharedMemory);
+        TickSafely("input",input.Tick);
+        TickSafely("sales",sales.Tick);
+        TickSafely("world",world.Tick);
+        TickSafely("clock",GuestClock.Tick);
+        TickSafely("save",GuestSave.Tick);
+        TickSafely("equipment visual",equipmentVisual.Tick);
+        TickSafely("live visual",liveVisual.Tick);
         for(int i=0; i<8 && requests.TryDequeue(out var request); i++)
         {
             if(request.Reply.Task.IsCompleted) continue;
