@@ -4,6 +4,8 @@ Play as V in Cyberpunk's Night City while your own Schedule I runs real growing,
 
 **Experimental Windows x64 solo mashup. Both games run locally.** Melty's Play prepares the supporting software, starts Schedule I, waits for its native bridge, uses native Continue when a save exists, then starts the actual Cyberpunk game and follows its full lifetime. No separate setup BAT or framework downloads are required from players.
 
+Both games remain running, so allow enough RAM for Cyberpunk and Schedule I together. Removing Nivalis avoids running a third game; this release does not claim a measured RAM reduction.
+
 ## What you can do
 
 - **Ctrl+B** buys a grow tent on a flat floor; **Ctrl+E** plants, waters or harvests its pot. Harvest is bagged automatically.

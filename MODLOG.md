@@ -20,3 +20,10 @@ Final corrected main upload: 71944c90-1c3b-4cae-ba05-5d79d30dbe29, SHA256 6c9113
 Creator explicitly requested cutting Nivalis for now. Final release scope is Cyberpunk + Schedule I only. Removed Nivalis game requirement, runtime payload, host scripts/plugin and startup from recipe/package. Bootstrap preserves and disables only old Nivalis host files on upgrade; it does not touch or close an existing Nivalis game. Nivalis source retained for future work. Listing and README updated to the agreed two-game scope. Prior Nivalis tests are not used as passing evidence.
 
 Final two-game release: a166ebbc-5b8a-4375-9fab-b187d9352da4, 111030010 bytes, SHA256 d1d59e10ae4e768c1e33bc15f0aab2b0e3f837e6c5a3f434ef79364f50b02068. Current test 8eb9b10a-be72-4b3c-9db1-aef6c08d4aa5 (2 x 3 min), checks mod-loads, guest-connected, host-gameplay. Nivalis removed by explicit creator instruction. 702 main archive entries plus 6 notices entries are mapped; no unmapped files; one-click check yes. Do not resubmit until this test completes.
+
+## 2026-10-17 final 0.3.1 two-game publication
+- Creator requested removal of Nivalis to reduce load, then explicitly stopped recording because of lag and asked to publish.
+- Release 4937607c-dd79-46fc-8657-8f18047daae5; main upload 76d390d7-cd64-49eb-9876-4bdd43dce298, SHA256 781bf92844e7812e965616427912f83e87e8d1fdc22536a012446a510866f3b9, 111030396 bytes, 702 files. Required notices retained.
+- Test 8eb9b10a-be72-4b3c-9db1-aef6c08d4aa5 reached street gameplay and passed all own checks, but loader-error check failed: native SI storage Sum overflow. Final IItemSlotOwner.GetQuantitySum patch uses long and saturates only int aggregate without changing stock. Build and five isolated prefix tests passed; final patch not rerun in game per recording request.
+- Updated listing title, two required games, feature scope, RAM guidance, Nivalis removal and testing limits. Real 0.3.1 screenshot approved as cover.
+- Submitted and publish requested; currently safety review. Both player issue keys recorded with qualified evidence, not claimed exact per-player reproduction.
